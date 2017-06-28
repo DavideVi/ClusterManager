@@ -30,7 +30,7 @@ class TestInventoryManager(unittest.TestCase):
     '''
     def test_list_inventory(self):
         inventory_manager = InventoryManager(self.session)
-        result = inventory.list_inventory()
+        result = inventory_manager.list_inventory()
 
     '''
     Listing inventory must return an array of instances containing:
@@ -55,12 +55,12 @@ class TestInventoryManager(unittest.TestCase):
                 result = inventory_manager.list_inventory()
 
                 for instance_info in result:
-                    self.assertIn('name', result)
-                    self.assertIn('id', result)
-                    self.assertIn('type', result)
-                    self.assertIn('state', result)
-                    self.assertIn('region', result)
-                    self.assertIn('account', result)
+                    self.assertIn('name', instance_info)
+                    self.assertIn('id', instance_info)
+                    self.assertIn('type', instance_info)
+                    self.assertIn('state', instance_info)
+                    self.assertIn('region', instance_info)
+                    self.assertIn('account', instance_info)
 
 
 
