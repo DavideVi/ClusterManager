@@ -1,7 +1,7 @@
 import unittest, boto3, placebo
 from os import listdir
 from os.path import isfile, join
-from inventory import InventoryManager
+from inventory_manager import InventoryManager
 
 DATA_PATH = './mock_responses'
 
@@ -61,9 +61,6 @@ class TestInventoryManager(unittest.TestCase):
                     self.assertIn('state', instance_info)
                     self.assertIn('region', instance_info)
                     self.assertIn('account', instance_info)
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
