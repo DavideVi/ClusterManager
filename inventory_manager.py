@@ -16,7 +16,9 @@ class InventoryManager():
         for reservation in raw_inventory["Reservations"]:
             for instance in reservation["Instances"]:
 
-                instance_name = ""
+                # Default is not "" in order to not have empty columns
+                # This makes output easier to process or query
+                instance_name = "<Nameless>"
 
                 # Extracting name
                 if "Tags" in instance:

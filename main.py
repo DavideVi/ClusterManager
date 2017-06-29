@@ -13,7 +13,8 @@ def main():
     inventory = inventory_manager.list_inventory()
 
     for item in inventory:
-        print (timestamp + " " + item["name"] + " " + item["type"] + " " + item["region"])
+        # Using \t as a delimiter in case of awk
+        print (timestamp + "\t" + item["name"] + "\t" + item["type"] + "\t" + item["region"])
 
 if __name__ == '__main__':
     main()
