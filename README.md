@@ -58,3 +58,5 @@ The polling period set as part of the cron job is 1 hour as that is the amount o
 The playbook would require changes in case additional services are required (e.g. a database that would have to be either deployed or pointed to) or if the cron command would need to change.
 
 The instance IAM role policies would also need updating if additional AWS services are being used.
+
+The update process is simplified with Ansible and takes less than a minute to complete. The transition to a new version is seamless if it happens between cron executions (which are one hour apart).
