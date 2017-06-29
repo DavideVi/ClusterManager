@@ -1,0 +1,8 @@
+---
+- hosts: '{{target}}'
+  tasks:
+    - name: Installing Python 2.7
+      apt:
+        name: python
+        state: present
+      become: true
