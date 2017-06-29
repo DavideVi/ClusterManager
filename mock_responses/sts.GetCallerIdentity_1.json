@@ -1,0 +1,19 @@
+{
+    "status_code": 200,
+    "data": {
+        "Account": "432112344321",
+        "UserId": "TESTTESTTESTTESTTEST2",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "489367c4-5c48-11e7-9838-754760444377",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "489367c4-5c48-11e7-9838-754760444377",
+                "date": "Wed, 28 Jun 2017 21:25:17 GMT",
+                "content-length": "406",
+                "content-type": "text/xml"
+            }
+        },
+        "Arn": "arn:aws:iam::432112344321:user/admin_key"
+    }
+}
