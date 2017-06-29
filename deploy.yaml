@@ -1,8 +1,64 @@
 ---
 - hosts: '{{target}}'
+  remote_user: ubuntu
+
   tasks:
-    - name: Installing Python 2.7
+
+    - name: Installing unzip
       apt:
-        name: python
+        name: unzip
         state: present
       become: true
+
+    - name: Installing boto3
+      pip:
+        name: boto3
+
+    - name: Uploading archive
+      copy:
+        src: ./clustermanager.zip
+        dest: /tmp/clustermanager.zip
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Detecting region
+      shell: ec2metadata --availability-zone | rev | cut -c2- | rev
+      register: metadata_output
+
+    - name: Recording region 
+      set_fact:
+        region: "{{ metadata_output.stdout }}"
+
+    - name: Creating AWS directory
+      file: path=/home/ubuntu/.aws state=directory
+
+    - name: Adding region information
+      template:
+        src: ./awsconfig.j2
+        dest: /home/ubuntu/.aws/config
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Creating install directory
+      file: path=/home/ubuntu/clustermanager state=directory
+
+    - name: Extracting archive to install directory
+      unarchive:
+        src: /tmp/clustermanager.zip
+        dest: /home/ubuntu/clustermanager/
+        remote_src: True
+
+    - name: Making script executable
+      file:
+        path: /home/ubuntu/clustermanager/main.py
+        state: touch
+        mode: "u=rx,g=wx,o=rwx"
+
+    - name: Setting up cron job
+      cron:
+        name: "Output inventory state"
+        hour: "*"
+        minute: "*/1"
+        job: "python /home/ubuntu/clustermanager/main.py >> /home/ubuntu/clustermanager_inventory 2>> /home/ubuntu/clustermanager_errors"
