@@ -59,7 +59,7 @@ class TestInventoryManager(unittest.TestCase):
                     self.assertIn('id', instance_info)
                     self.assertIn('type', instance_info)
                     self.assertIn('state', instance_info)
-                    self.assertIn('region', instance_info)
+                    self.assertIn('zone', instance_info)
                     self.assertIn('account', instance_info)
 
 if __name__ == '__main__':

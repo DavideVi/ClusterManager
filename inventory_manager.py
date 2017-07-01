@@ -34,7 +34,7 @@ class InventoryManager():
                     'id': instance["InstanceId"],
                     'type': instance["InstanceType"],
                     'state': instance["State"]["Name"],
-                    'region': instance["Placement"]["AvailabilityZone"],
+                    'zone': instance["Placement"]["AvailabilityZone"],
                     'account': self.account
                 })
 

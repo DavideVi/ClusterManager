@@ -14,7 +14,7 @@ def main():
 
     for item in inventory:
         # Using \t as a delimiter in case of awk
-        print (timestamp + "\t" + item["name"] + "\t" + item["type"] + "\t" + item["region"])
+        print (timestamp + "\t" + item["name"] + "\t" + item["type"] + "\t" + item["zone"])
 
 if __name__ == '__main__':
     main()
