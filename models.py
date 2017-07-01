@@ -5,22 +5,15 @@ from mongoengine import *
 Database connection handled here
 Details extracted from system environment variables
 '''
-
-if os.environ['CM_DB_URI'] is not None:
+if 'CM_DB_URI' in os.environ and 'CM_DB_NAME' in os.environ:
     db_uri = os.environ['CM_DB_URI']
-else:
-    raise ValueError('CM_DB_URI system environment variable is not set')
-
-if os.environ['CM_DB_NAME'] is not None:
     db_name = os.environ['CM_DB_NAME']
-else:
-    raise ValueError('CM_DB_NAME system environment variable is not set')
 
-# TODO: Handle invalid connection string
-connect(
-    db=db_name,
-    host=db_uri
-)
+    # TODO: Handle invalid connection string
+    connect(
+        db=db_name,
+        host=db_uri
+    )
 
 '''
 Instance collection
