@@ -175,7 +175,44 @@ class TestAPIMethods(unittest.TestCase):
                     )
 
     def test_aggregate_type(self):
-        pass
+
+        for instance_type in self.types:
+            '''
+            Calculating expected result
+            '''
+            results = Instance.objects(
+                    instance_type__contains = instance_type,
+                    records__timestamp__gte=(LOAD_TIME - timedelta(days=1))
+                )
+            expected = {
+                str(instance_type): {}
+            }
+
+            for instance in results:
+                instance_region = instance["instance_zone"][:-1]
+
+                if instance_region not in expected[instance_type]:
+                    expected[instance["instance_type"]][instance_region] = 1
+                else:
+                    expected[instance["instance_type"]][instance_region] += 1
+
+            '''
+            Making call and validating output
+            '''
+            raw_response = self.app.get('/aggregate/' + instance_type)
+            response = json.loads(raw_response.data)
+
+            # Region must be present in response
+            self.assertIn(instance_type, response)
+
+            for region in expected[instance_type]:
+                # Instance type must be present in expected region
+                self.assertIn(region, response[instance_type])
+                # Counts must match
+                self.assertEquals(
+                        expected[instance_type][region],
+                        response[instance_type][region]
+                    )
 
     '''
     Method should only accept GET

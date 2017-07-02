@@ -11,7 +11,6 @@ DEFAULT_AGGREGATE_TIMESPAN = datetime.datetime.now() - timedelta(days=1)
 @app.route('/aggregate')
 def get_aggregate():
 
-
     # Retrieving records for all instances in the last day
     aggregate_data = Instance.objects(records__timestamp__gte=DEFAULT_AGGREGATE_TIMESPAN)
 
@@ -42,7 +41,16 @@ def get_aggregate_filter(aggregate_filter):
 
     # Aggregate by instance type
     else:
-        return {}
+        instance_type = aggregate_filter
+
+        aggregate_data = Instance.objects(
+            records__timestamp__gte=DEFAULT_AGGREGATE_TIMESPAN,
+            instance_type__contains=instance_type
+            )
+
+        result = type_response_from_data(aggregate_data)
+
+        return jsonify(result)
 
 '''
 Returns a formatted dictionary based on aggregated data
@@ -66,6 +74,32 @@ def region_response_from_data(aggregate_data):
         # If it does, simply incrementing the counter
         else:
             result[instance_region][instance["instance_type"]] += 1
+
+    return result
+
+'''
+Returns a formatted dictionary based on aggregated data
+Format ensures regions are grouped under types
+'''
+def type_response_from_data(aggregate_data):
+
+    result = {}
+
+    for instance in aggregate_data:
+
+        # We have zone but we want region
+        instance_region = instance["instance_zone"][:-1]
+
+        # Adding type  to results if it does not exist
+        if instance["instance_type"] not in result:
+            result[instance["instance_type"]] = {}
+
+        # Adding type into region if it does not exist
+        if instance_region not in result[instance["instance_type"]]:
+            result[instance["instance_type"]][instance_region] = 1
+        # If it does, simply incrementing the counter
+        else:
+            result[instance["instance_type"]][instance_region] += 1
 
     return result
 
