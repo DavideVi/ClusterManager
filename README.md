@@ -4,15 +4,15 @@
 
 Requirements:
 + EC2 instance
- * Ubuntu distribution
-   - Python 2.7.*
-   - Python pip
- * An IAM role must be associated with the instance and must have the following permissions:
-   - EC2 DescribeInstances
-   - STS GetCallerIdentity
- * A MongoDB database
-   - I've attempted to deploy a Mongo container using Ansible - but the docker module was broken by its dependencies being made backwards-incompatible. Will fix in a later iteration.
-   - If a database exists (can be easily set up `docker run --name some-mongo -p 27017:27017 -d mongo`), the app can be pointed to it by exporting the `CM_DB_URI` and `CM_DB_NAME` variables.
+    * Ubuntu distribution
+        - Python 2.7.*
+        - Python pip
+    * An IAM role must be associated with the instance and must have the following permissions:
+        - EC2 DescribeInstances
+        - STS GetCallerIdentity
+    * A MongoDB database
+        - I've attempted to deploy a Mongo container using Ansible - but the docker module was broken by its dependencies being made backwards-incompatible. Will fix in a later iteration.
+        - If a database exists (can be easily set up `docker run --name some-mongo -p 27017:27017 -d mongo`), the app can be pointed to it by exporting the `CM_DB_URI` and `CM_DB_NAME` variables.
 
 Script is compatible with Python3 but Ansible cannot deploy it using a Python 3 interpreter. Username `ubuntu` is hard-coded.
 
@@ -28,14 +28,14 @@ ansible-playbook deploy.yaml --extra-vars "target=<your target hosts> db_uri=mon
 
 ### Application Structure
 Application consists of:
- * Class `InventoryManager` used as a wrapper for AWS API calls.
- * Main script that requests the information using `InventoryManager`.
-  - It is intended to be called on a regular basis from an external service (such as `cron`).
-  - It outputs the results along with a timestamp.
- * The database models
-  - Used to map objects to database collections/tables
-  - Connection to database is created based on the `CM_DB_URI` and `CM_DB_NAME` system environment variables
-  - If variables are not present, no database connection will be attempted
+* Class `InventoryManager` used as a wrapper for AWS API calls.
+* Main script that requests the information using `InventoryManager`.
+    - It is intended to be called on a regular basis from an external service (such as `cron`).
+    - It outputs the results along with a timestamp.
+* The database models
+    - Used to map objects to database collections/tables
+    - Connection to database is created based on the `CM_DB_URI` and `CM_DB_NAME` system environment variables
+    - If variables are not present, no database connection will be attempted
 
 The inventory logic has been placed in its own module (`inventory_manager.py`) so that it can be imported into any existing projects / frameworks. The main script in this case is just used to call the module and could easily be deployed as a Lambda.
 
