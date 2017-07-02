@@ -10,9 +10,29 @@
         state: present
       become: true
 
-    - name: Installing boto3
+    - name: Installing pip dependencies
       pip:
-        name: boto3
+        name: "{{ item.name }}"
+        version: "{{ item.version }}"
+        state: present
+      with_items:
+        - { name: boto3, version: 1.4.4}
+        - { name: mongoengine, version: 0.13.0}
+
+    - name: Exporting CM_DB_URI
+      lineinfile:
+        dest: /home/ubuntu/.profile
+        line: 'export CM_DB_URI="{{db_uri}}"'
+        state: present
+
+    - name: Exporting CM_DB_NAME
+      lineinfile:
+        dest: /home/ubuntu/.profile
+        line: 'export CM_DB_NAME="{{db_name}}"'
+        state: present
+
+    - name: Reloading env variables
+      shell: source /home/ubuntu/.bashrc
 
     - name: Uploading archive
       copy:
@@ -61,4 +81,4 @@
         name: "Output inventory state"
         hour: "*/1"
         minute: "0"
-        job: "python /home/ubuntu/clustermanager/main.py >> /home/ubuntu/clustermanager_inventory 2>> /home/ubuntu/clustermanager_errors"
+        job: ". /home/ubuntu/.profile; python /home/ubuntu/clustermanager/main.py >> /home/ubuntu/clustermanager_inventory 2>> /home/ubuntu/clustermanager_errors"
