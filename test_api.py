@@ -29,15 +29,15 @@ class TestAPIMethods(unittest.TestCase):
         Populating database with random test data
         '''
         MAX_INSTANCES = 60
-        zones = [ "eu-west-1a", "eu-west-1b", "eu-west-1c", "eu-west-2a"]
-        types = [ "t2.micro", "t2.nano", "m4.xlarge" ]
+        self.zones = [ "eu-west-1a", "eu-west-1b", "eu-west-1c", "eu-west-2a"]
+        self.types = [ "t2.micro", "t2.nano", "m4.xlarge" ]
         to_create = {}
 
         # Creating random information from sample regions and types
         for index in range(0, MAX_INSTANCES):
 
-            random_zone = zones[random.randint(0, len(zones) - 1)]
-            random_type = types[random.randint(0, len(types) - 1)]
+            random_zone = self.zones[random.randint(0, len(self.zones) - 1)]
+            random_type = self.types[random.randint(0, len(self.types) - 1)]
 
             if random_zone not in to_create:
                 to_create[random_zone] = {}
@@ -79,9 +79,6 @@ class TestAPIMethods(unittest.TestCase):
                 ))
                 instance.save()
 
-    def setUp(self):
-        pass
-
     '''
     Should return total number of servers per region and instance type
     for the last day
@@ -90,12 +87,6 @@ class TestAPIMethods(unittest.TestCase):
 
         '''
         Calculating expected result
-        Format:
-        {
-            'region': {
-                'type': count
-            }
-        }
         '''
         results = Instance.objects(records__timestamp__gte=(LOAD_TIME - timedelta(days=1)))
         expected = {}
@@ -129,8 +120,60 @@ class TestAPIMethods(unittest.TestCase):
                         response[expected_region][itype]
                     )
 
+    '''
+    Should return total number of servers a single region
+    Should be grouped by instance type and aggregate for the last day
+    '''
     def test_aggregate_region(self):
-        pass
+
+        '''
+        Extracting regions from zones
+        '''
+        regions = []
+
+        for zone in self.zones:
+            if zone[:-1] not in regions:
+                regions.append(zone[:-1])
+
+        '''
+        Testing against all regions
+        '''
+        for region in regions:
+            '''
+            Calculating expected result
+            '''
+            results = Instance.objects(
+                    instance_zone__contains = region,
+                    records__timestamp__gte=(LOAD_TIME - timedelta(days=1))
+                )
+            expected = {
+                str(region): {}
+            }
+
+            for instance in results:
+                if instance["instance_type"] not in expected[region]:
+                    expected[region][instance["instance_type"]] = 1
+                else:
+                    expected[region][instance["instance_type"]] += 1
+
+            '''
+            Making call and validating output
+            '''
+            raw_response = self.app.get('/aggregate/' + region)
+            response = json.loads(raw_response.data)
+
+            # Region must be present in response
+            self.assertIn(region, response)
+
+            for itype in expected[region]:
+                # Instance type must be present in expected region
+                self.assertIn(itype, response[region])
+                # Counts must match
+                self.assertEquals(
+                        expected[region][itype],
+                        response[region][itype]
+                    )
+
 
     def test_aggregate_type(self):
         pass
