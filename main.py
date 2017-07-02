@@ -2,7 +2,7 @@
 Polling is handled externally by calling this script
 This script will output the required information ONCE and append timestamps
 '''
-import os, boto3, time, datetime
+import os, boto3, time, datetime, sys
 from inventory_manager import InventoryManager
 from models import Instance, InstanceRecord
 from mongoengine import DoesNotExist
@@ -14,17 +14,17 @@ If information is not present the application will simply output to the terminal
 USE_DB = True
 
 if 'CM_DB_URI' not in os.environ:
-    print("\033[93mExport CM_DB_URI as the database url in order to save to database")
-    print("Example: '$ export CM_DB_URI=\"mongodb://localhost\"\033[0m'")
+    sys.stderr.write("\033[93mExport CM_DB_URI as the database url in order to save to database\n")
+    sys.stderr.write("Example: '$ export CM_DB_URI=\"mongodb://localhost\"\033[0m'\n")
     USE_DB = False
 
 if 'CM_DB_NAME' not in os.environ:
-    print("\033[93mExport CM_DB_NAME as the database name in order to save to database")
-    print("Example: '$ export CM_DB_NAME=\"clustermanager\"'\033[0m")
+    sys.stderr.write("\033[93mExport CM_DB_NAME as the database name in order to save to database\n")
+    sys.stderr.write("Example: '$ export CM_DB_NAME=\"clustermanager\"'\033[0m\n")
     USE_DB = False
 
 if not USE_DB:
-    print("\033[93mWarning: Database will not be used\033[0m")
+    sys.stderr.write("\033[93mWarning: Database will not be used\033[0m\n")
 
 def main():
 

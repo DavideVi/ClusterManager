@@ -11,12 +11,13 @@ Requirements:
    - EC2 DescribeInstances
    - STS GetCallerIdentity
 
+
 Script is compatible with Python3 but Ansible cannot deploy it using a Python 3 interpreter. Username `ubuntu` is hard-coded.
 
 To deploy:
 ```bash
 # Archive the sources so that they can be uploaded
-zip -r clustermanager.zip inventory_manager.py main.py
+zip -r clustermanager.zip inventory_manager.py main.py models.py
 # Run the playbook - Ensure that you specify your target hosts
 ansible-playbook deploy.yaml --extra-vars "target=<your target hosts>"
 ```
