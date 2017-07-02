@@ -79,6 +79,6 @@
     - name: Setting up cron job
       cron:
         name: "Output inventory state"
-        # hour: "*/1"
-        minute: "*/1"
+        hour: "*/1"
+        minute: "0"
         job: ". /home/ubuntu/.profile; python /home/ubuntu/clustermanager/main.py >> /home/ubuntu/clustermanager_inventory 2>> /home/ubuntu/clustermanager_errors"
