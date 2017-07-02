@@ -10,9 +10,9 @@ Requirements:
     * An IAM role must be associated with the instance and must have the following permissions:
         - EC2 DescribeInstances
         - STS GetCallerIdentity
-    * A MongoDB database
-        - I've attempted to deploy a Mongo container using Ansible - but the docker module was broken by its dependencies being made backwards-incompatible. Will fix in a later iteration.
-        - If a database exists (can be easily set up `docker run --name some-mongo -p 27017:27017 -d mongo`), the app can be pointed to it by exporting the `CM_DB_URI` and `CM_DB_NAME` variables.
++ A MongoDB database
+    * I've attempted to deploy a Mongo container using Ansible - but the docker module was broken by its dependencies being made backwards-incompatible. Will fix in a later iteration.
+    * If a database exists (can be easily set up `docker run --name some-mongo -p 27017:27017 -d mongo`), the app can be pointed to it by exporting the `CM_DB_URI` and `CM_DB_NAME` variables.
 
 Script is compatible with Python3 but Ansible cannot deploy it using a Python 3 interpreter. Username `ubuntu` is hard-coded.
 
