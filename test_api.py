@@ -174,8 +174,19 @@ class TestAPIMethods(unittest.TestCase):
                         response[region][itype]
                     )
 
-
     def test_aggregate_type(self):
+        pass
+
+    '''
+    Method should only accept GET
+    '''
+    def test_aggregate_methods(self):
+        pass
+
+    '''
+    Method should return Bad Request if filter is not a region or type
+    '''
+    def test_aggregate_filter(self):
         pass
 
 '''

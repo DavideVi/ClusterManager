@@ -6,13 +6,50 @@ from models import Instance, InstanceRecord
 
 app = Flask(__name__)
 
+DEFAULT_AGGREGATE_TIMESPAN = datetime.datetime.now() - timedelta(days=1)
+
 @app.route('/aggregate')
 def get_aggregate():
 
-    result = {}
 
     # Retrieving records for all instances in the last day
-    aggregate_data = Instance.objects(records__timestamp__gte=datetime.datetime.now() - timedelta(days=1))
+    aggregate_data = Instance.objects(records__timestamp__gte=DEFAULT_AGGREGATE_TIMESPAN)
+
+    result = region_response_from_data(aggregate_data)
+
+    return jsonify(result)
+
+@app.route('/aggregate/<aggregate_filter>')
+def get_aggregate_filter(aggregate_filter):
+
+    '''
+    Determining if the filter is by region or type from the string format
+    '''
+    filter_region = "." not in aggregate_filter
+
+    # Aggregate by instance region
+    if filter_region:
+        region = aggregate_filter
+
+        aggregate_data = Instance.objects(
+            records__timestamp__gte=DEFAULT_AGGREGATE_TIMESPAN,
+            instance_zone__contains=region
+            )
+
+        result = region_response_from_data(aggregate_data)
+
+        return jsonify(result)
+
+    # Aggregate by instance type
+    else:
+        return {}
+
+'''
+Returns a formatted dictionary based on aggregated data
+Format ensures types are grouped under regions
+'''
+def region_response_from_data(aggregate_data):
+    result = {}
 
     for instance in aggregate_data:
 
@@ -30,7 +67,7 @@ def get_aggregate():
         else:
             result[instance_region][instance["instance_type"]] += 1
 
-    return jsonify(result)
+    return result
 
 if __name__ == '__main__':
 
