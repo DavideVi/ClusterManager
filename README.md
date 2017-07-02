@@ -3,7 +3,7 @@
 ## Deployment
 
 Requirements:
-* EC2 instance
++ EC2 instance
  * Ubuntu distribution
    - Python 2.7.*
    - Python pip
@@ -11,7 +11,7 @@ Requirements:
    - EC2 DescribeInstances
    - STS GetCallerIdentity
  * A MongoDB database
-   - I've attempted to deploy a Mongo container using Ansible - but the docker module was broken by its dependencies being made backwards-incompatible
+   - I've attempted to deploy a Mongo container using Ansible - but the docker module was broken by its dependencies being made backwards-incompatible. Will fix in a later iteration.
    - If a database exists (can be easily set up `docker run --name some-mongo -p 27017:27017 -d mongo`), the app can be pointed to it by exporting the `CM_DB_URI` and `CM_DB_NAME` variables.
 
 Script is compatible with Python3 but Ansible cannot deploy it using a Python 3 interpreter. Username `ubuntu` is hard-coded.
@@ -28,11 +28,11 @@ ansible-playbook deploy.yaml --extra-vars "target=<your target hosts> db_uri=mon
 
 ### Application Structure
 Application consists of:
- - Class `InventoryManager` used as a wrapper for AWS API calls.
- - Main script that requests the information using `InventoryManager`.
+ * Class `InventoryManager` used as a wrapper for AWS API calls.
+ * Main script that requests the information using `InventoryManager`.
   - It is intended to be called on a regular basis from an external service (such as `cron`).
   - It outputs the results along with a timestamp.
- - The database models
+ * The database models
   - Used to map objects to database collections/tables
   - Connection to database is created based on the `CM_DB_URI` and `CM_DB_NAME` system environment variables
   - If variables are not present, no database connection will be attempted
@@ -67,8 +67,10 @@ The polling period set as part of the cron job is 1 hour as that is the amount o
 **Note:** Deployment paths are set to `/home/ubuntu` for simplicity. Ideally they would be deployed to `/usr/bin` and logs would go in `/var/log`. The application would also run as its own user that has limited access.
 
 ### Deployment Maintainability
-The playbook would require changes in case additional services are required (e.g. a database that would have to be either deployed or pointed to) or if the cron command would need to change.
+The playbook would require changes in case additional services are required or if the cron command would need to change.
 
 The instance IAM role policies would also need updating if additional AWS services are being used.
 
 The update process is simplified with Ansible and takes less than a minute to complete. The transition to a new version is seamless if it happens between cron executions (which are one hour apart).
+
+The database is non-relational and would not require any migrations - Thus future versions of the application could function with the same database.
