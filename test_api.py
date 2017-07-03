@@ -62,19 +62,19 @@ class TestAPIMethods(unittest.TestCase):
                     instance_id_counter += 1
 
         # Spreading instance records across 12 months
-        timestamps = []
+        self.timestamps = []
         for i in range(-11,1):
-            timestamps.append(monthdelta(LOAD_TIME, i))
+            self.timestamps.append(monthdelta(LOAD_TIME, i))
 
         # Going through all instances and creating records between two
         # randomly-selected timestamps
         for instance in Instance.objects():
-            start = random.randint(0, len(timestamps) - 2)
-            end = random.randint(start + 1, len(timestamps) - 1)
+            start = random.randint(0, len(self.timestamps) - 2)
+            end = random.randint(start + 1, len(self.timestamps) - 1)
 
             for timestamp_index in range(start, end + 1):
                 instance.records.append(InstanceRecord(
-                    timestamp = timestamps[timestamp_index],
+                    timestamp = self.timestamps[timestamp_index],
                     instance_state = "RUNNING"
                 ))
                 instance.save()
@@ -121,8 +121,8 @@ class TestAPIMethods(unittest.TestCase):
                     )
 
     '''
-    Should return total number of servers a single region
-    Should be grouped by instance type and aggregate for the last day
+    Should return total number of servers for a single region
+    Should be grouped by instance type and aggregated for the last day
     '''
     def test_aggregate_region(self):
 
@@ -174,6 +174,10 @@ class TestAPIMethods(unittest.TestCase):
                         response[region][itype]
                     )
 
+    '''
+    Should return total number of instances of a certain type
+    Should be grouped by region type and aggregated for the last day
+    '''
     def test_aggregate_type(self):
 
         for instance_type in self.types:
@@ -218,13 +222,19 @@ class TestAPIMethods(unittest.TestCase):
     Method should only accept GET
     '''
     def test_aggregate_methods(self):
-        pass
+        raise NotImplementedError
 
     '''
     Method should return Bad Request if filter is not a region or type
     '''
     def test_aggregate_filter(self):
-        pass
+        raise NotImplementedError
+
+    '''
+    Method should return all records for a given date
+    '''
+    def test_instance_info(self):
+        raise NotImplementedError
 
 '''
 Helper method to substract months

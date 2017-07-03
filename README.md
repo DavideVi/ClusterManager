@@ -24,6 +24,22 @@ zip -r clustermanager.zip inventory_manager.py main.py models.py
 ansible-playbook deploy.yaml --extra-vars "target=<your target hosts> db_uri=mongodb://<database location>/ db_name=<database name>"
 ```
 
+## API Usage
+
+The API can aggregate information for the latest 24 hours and display them to the user.
+
+To start the server:
+```bash
+python server.py
+```
+
+The following calls can be made:
+* `POST /aggregate` will return a sum of all instance types grouped by region.
+* `POST /aggregate/<region>` (e.g. `/aggregate/eu-west-1`) will return a sum of all instance types for the provided region.
+* `POST /aggregate/<instance type>` (e.g. `/aggregate/t2.micro`) will return a sum of all instances in all regions for a provided instance type.
+
+The API can run anywhere as long as a valid database connection is provided.
+
 ## Architecture
 
 ### Application Structure
@@ -36,6 +52,10 @@ Application consists of:
     - Used to map objects to database collections/tables
     - Connection to database is created based on the `CM_DB_URI` and `CM_DB_NAME` system environment variables
     - If variables are not present, no database connection will be attempted
+* The API
+    - Simple Flask-based API
+    - Makes use of database models to query the database
+    - Makes use of the same system environment variables to connect to the database
 
 The inventory logic has been placed in its own module (`inventory_manager.py`) so that it can be imported into any existing projects / frameworks. The main script in this case is just used to call the module and could easily be deployed as a Lambda.
 
