@@ -1,9 +1,9 @@
 import unittest, boto3, placebo
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, dirname
 from inventory_manager import InventoryManager
 
-DATA_PATH = './mock_responses'
+DATA_PATH = join(dirname(__file__), 'mock_responses')
 
 class TestInventoryManager(unittest.TestCase):
 

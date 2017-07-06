@@ -5,5 +5,5 @@ nosetests \
     --cover-html \
     --cover-branches \
     --cover-min-percentage=80 \
-    test_inventory_manager.py test_models.py
+    tests/test_inventory_manager.py tests/test_models.py
 # python test_api.py
