@@ -16,16 +16,7 @@ class InventoryManager():
         for reservation in raw_inventory["Reservations"]:
             for instance in reservation["Instances"]:
 
-                # Default is not "" in order to not have empty columns
-                # This makes output easier to process or query
-                instance_name = "<Nameless>"
-
-                # Extracting name
-                if "Tags" in instance:
-                    for tag in instance["Tags"]:
-                        if tag["Key"] == "Name":
-                            instance_name = tag["Value"]
-                            break
+                instance_name = self.get_name(instance)
 
                 # All keys are mandatory, if one of them is missing
                 # the application will crash, but we'd have bigger problems
@@ -39,3 +30,17 @@ class InventoryManager():
                 })
 
         return inventory
+
+    def get_name(self, instance):
+        """
+        Returns an instance's name.
+
+        Default value is '<Nameless> to makes output easier
+        to process or query
+        """
+
+        for tag in instance.get("Tags", []):
+            if tag["Key"] == "Name":
+                return tag["Value"]
+
+        return "<Nameless>"
