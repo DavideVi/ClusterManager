@@ -1,5 +1,3 @@
-import boto3
-
 class InventoryManager():
 
     def __init__(self, boto3_session):
