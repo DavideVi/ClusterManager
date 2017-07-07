@@ -1,3 +1,23 @@
+from itertools import chain
+
+AWS_REGIONS = [
+    'us-east-2',
+    'us-east-1',
+    'us-west-1',
+    'us-west-2',
+    'ca-central-1',
+    'ap-south-1',
+    'ap-northeast-2',
+    'ap-southeast-1',
+    'ap-southeast-2',
+    'ap-northeast-1',
+    'eu-central-1',
+    'eu-west-1',
+    'eu-west-2',
+    'sa-east-1'
+]
+
+
 class InventoryManager():
 
     def __init__(self, boto3_session):
@@ -5,8 +25,15 @@ class InventoryManager():
         self.account = self.session.client('sts').get_caller_identity().get('Account')
 
     def list_inventory(self):
-        ec2 = self.session.client('ec2')
-        raw_inventory = ec2.describe_instances()
+        clients = [
+            self.session.client('ec2', region_name=region_name)
+            for region_name in AWS_REGIONS
+        ]
+
+        raw_inventory = list(chain([
+            client.describe_instances()
+            for client in clients
+        ]))
 
         return [
             # All keys are mandatory, if one of them is missing
@@ -20,7 +47,8 @@ class InventoryManager():
                 'zone': instance["Placement"]["AvailabilityZone"],
                 'account': self.account
             }
-            for reservation in raw_inventory["Reservations"]
+            for reservations in raw_inventory
+            for reservation in reservations["Reservations"]
             for instance in reservation["Instances"]
         ]
 

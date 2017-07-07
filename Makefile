@@ -6,7 +6,6 @@ Commands:
 endef
 
 export USAGE
-export AWS_DEFAULT_REGION=us-east-1
 export CM_DB_URI=mongodb://localhost
 export CM_DB_NAME=inventory_manager
 
