@@ -26,7 +26,9 @@ if 'CM_DB_NAME' not in os.environ:
 if not USE_DB:
     sys.stderr.write("\033[93mWarning: Database will not be used\033[0m\n")
 
+
 def main():
+    print "Querying AWS"
 
     session = boto3.Session() # will be created with EC2 role
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
