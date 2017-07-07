@@ -12,6 +12,19 @@ export CM_DB_NAME=inventory_manager
 usage:
 	@echo "$$USAGE"
 
+clean:
+	@printf "Cleaning repo:\n"
+	echo "${PATH}"
+	rm -rf \
+		*.egg-info \
+		dist/ \
+		build/ \
+		cover \
+		.coverage \
+		unit.xml
+	find . -name '*.pyc' -exec rm {} +
+
+
 info:
 	@python --version
 	@pip --version
