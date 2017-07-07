@@ -35,3 +35,7 @@ server: info
 
 query_aws: info
 	python main.py
+
+demo: info mongodb query_aws server
+	@echo "Demo started"
+	@echo "Open http://localhost:5000/aggregate"
