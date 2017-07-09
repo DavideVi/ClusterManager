@@ -35,6 +35,7 @@ clean:
 	# $(eval export FILTER="before=${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:$$VERSION-$(BRANCH)")
 	# $(eval export IMAGES=`docker images --filter='$$FILTER'  | awk '/^*cluster*/ {print $3}'`)
 	# docker rmi $(IMAGES);
+	# docker rmi $(docker images --filter='before=davidevitelaru/clustermanager:0.1.0.36-docker'  | awk '/^*cluster*/ {print $3}')
 
 info:
 	@python --version

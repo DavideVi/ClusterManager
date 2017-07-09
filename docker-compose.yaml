@@ -1,0 +1,24 @@
+version: '2'
+services:
+
+  application:
+    container_name: "clustermanager_application"
+    image: "davidevitelaru/clustermanager:0.1.0.36-docker"
+    ports:
+     - "80:5000"
+    networks:
+     - main
+    environment:
+     - CM_DB_URI=mongodb://mongodb/
+
+  database:
+    image: "mongo"
+    container_name: "clustermanager_mongodb"
+    ports:
+     - "27017:27017"
+    networks:
+     - main
+
+networks:
+  main:
+    driver: bridge
