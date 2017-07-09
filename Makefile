@@ -1,3 +1,5 @@
+SHELL:=/bin/bash
+
 define USAGE
 Commands:
 	make tests
@@ -9,6 +11,9 @@ endef
 export USAGE
 export CM_DB_URI=mongodb://localhost
 export CM_DB_NAME=inventory_manager
+export REGISTRY_USERNAME=davidevitelaru
+export REGISTRY_IMAGE_NAME=clustermanager
+export BRANCH=`git branch | grep \* | cut -d ' ' -f2 | cut -d '/' -f2`
 
 usage:
 	@echo "$$USAGE"
@@ -24,7 +29,6 @@ clean:
 		.coverage \
 		unit.xml
 	find . -name '*.pyc' -exec rm {} +
-
 
 info:
 	@python --version
@@ -53,28 +57,11 @@ demo: info mongodb query_aws server
 	@echo "Demo started"
 	@echo "Open http://localhost:5000/aggregate"
 
-image: info
-	set -ex
-	# SET THE FOLLOWING VARIABLES
-	# docker hub username
-	USERNAME=davidevitelaru
-	# image name
-	IMAGE=clustermanager
-	# ensure we're up to date
-	git pull
-	# bump version
-	docker run --rm -v "$PWD":/app treeder/bump patch
-	version=`cat VERSION`
-	echo "version: $version"
-	# run build
-	docker build -t $USERNAME/$IMAGE:latest .
-	# tag it
-	git add -A
-	git commit -m "version $version"
-	git tag -a "$version" -m "version $version"
-	git push
-	git push --tags
-	docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$version
-	# push it
-	docker push $USERNAME/$IMAGE:latest
-	docker push $USERNAME/$IMAGE:$version
+increment_build:
+	perl -i -pe 's/\b(\d+)(?=\D*$$)/$$1+1/e' VERSION
+
+image: increment_build
+	@docker build . -t ${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:`cat VERSION`-${BRANCH}
+
+publish: image
+	@docker push ${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:`cat VERSION`-${BRANCH}
