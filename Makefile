@@ -3,6 +3,7 @@ Commands:
 	make tests
 	make server
 	make query_aws
+	make image
 endef
 
 export USAGE
@@ -51,3 +52,29 @@ query_aws: info
 demo: info mongodb query_aws server
 	@echo "Demo started"
 	@echo "Open http://localhost:5000/aggregate"
+
+image: info
+	set -ex
+	# SET THE FOLLOWING VARIABLES
+	# docker hub username
+	USERNAME=davidevitelaru
+	# image name
+	IMAGE=clustermanager
+	# ensure we're up to date
+	git pull
+	# bump version
+	docker run --rm -v "$PWD":/app treeder/bump patch
+	version=`cat VERSION`
+	echo "version: $version"
+	# run build
+	docker build -t $USERNAME/$IMAGE:latest .
+	# tag it
+	git add -A
+	git commit -m "version $version"
+	git tag -a "$version" -m "version $version"
+	git push
+	git push --tags
+	docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$version
+	# push it
+	docker push $USERNAME/$IMAGE:latest
+	docker push $USERNAME/$IMAGE:$version
