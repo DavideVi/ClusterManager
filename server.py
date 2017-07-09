@@ -2,6 +2,7 @@ import os, sys, datetime
 from datetime import timedelta
 from flask import Flask, jsonify
 from flask_apscheduler import APScheduler
+from main import main
 
 from models import Instance, InstanceRecord
 
