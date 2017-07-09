@@ -1,7 +1,8 @@
 import os, sys, datetime
 from datetime import timedelta
-from flask import Flask
-from flask import jsonify
+from flask import Flask, jsonify
+from flask_apscheduler import APScheduler
+
 from models import Instance, InstanceRecord
 
 app = Flask(__name__)
@@ -103,6 +104,21 @@ def type_response_from_data(aggregate_data):
 
     return result
 
+
+class SchedConfig(object):
+    JOBS = [
+        {
+            'id': 'query_aws',
+            'func': 'main:main',
+            'args': tuple(),
+            'trigger': 'interval',
+            'seconds': 60
+        }
+    ]
+
+    SCHEDULER_API_ENABLED = True
+
+
 if __name__ == '__main__':
 
     if 'CM_DB_URI' not in os.environ or 'CM_DB_NAME' not in os.environ:
@@ -110,4 +126,10 @@ if __name__ == '__main__':
         sys.stderr.write("\033[91mApplication will now exit\033[0m\n")
         exit(1)
 
-    app.run(debug = True)
+    app.config.from_object(SchedConfig())
+
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
+
+    app.run(debug=True)

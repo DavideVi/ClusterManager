@@ -1,5 +1,19 @@
 # Inventory Polling Script
 
+## Quickstart
+
+The following four commands will get the project up and running:
+```
+# Check that all tests are passing
+make test
+# Start a mongodb server using docker
+make mongodb
+# Query AWS and populate the db
+make query_aws
+# Start the API server to query the db
+make server
+```
+
 ## Deployment
 
 Requirements:

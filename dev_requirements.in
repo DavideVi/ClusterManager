@@ -1,0 +1,5 @@
+pip-tools
+placebo
+nose
+sniffer
+coverage
