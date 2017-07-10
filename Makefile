@@ -14,7 +14,9 @@ export CM_DB_URI=mongodb://localhost
 export CM_DB_NAME=inventory_manager
 export REGISTRY_USERNAME=davidevitelaru
 export REGISTRY_IMAGE_NAME=clustermanager
-export BRANCH=`git branch | grep \* | cut -d ' ' -f2 | cut -d '/' -f2`
+export BRANCH=$(shell git branch | grep \* | cut -d ' ' -f2 | cut -d '/' -f2)
+export CURRENT_VERSION=$(shell cat VERSION)
+export PREVIOUS_IMAGES=$(shell docker images --filter='before=${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:${CURRENT_VERSION}-${BRANCH}'  | awk '/^*cluster*/ {print $$3}')
 
 usage:
 	@echo "$$USAGE"
@@ -30,13 +32,7 @@ clean:
 		.coverage \
 		unit.xml
 	find . -name '*.pyc' -exec rm {} +
-	# $(eval export VERSION=$$(cat VERSION))
-	# echo ${VERSION}
-	# $(eval export BRANCH=$(git branch | grep \* | cut -d ' ' -f2 | cut -d '/' -f2))
-	# $(eval export FILTER="before=${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:$$VERSION-$(BRANCH)")
-	# $(eval export IMAGES=`docker images --filter='$$FILTER'  | awk '/^*cluster*/ {print $3}'`)
-	# docker rmi $(IMAGES);
-	# docker rmi $(docker images --filter='before=davidevitelaru/clustermanager:0.1.0.36-docker'  | awk '/^*cluster*/ {print $3}')
+	-docker rmi ${PREVIOUS_IMAGES}
 
 info:
 	@python --version
