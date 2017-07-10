@@ -64,13 +64,16 @@ demo: info mongodb query_aws server
 increment_build:
 	@perl -i -pe 's/\b(\d+)(?=\D*$$)/$$1+1/e' VERSION
 
+update_compose_version:
+	sed -i.bak 's/davidevitelaru\/clustermanager:.*/davidevitelaru\/clustermanager:${CURRENT_VERSION}-${BRANCH}"/' docker-compose.yaml
+
 image: increment_build
 	@docker build . -t ${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:`cat VERSION`-${BRANCH}
 
 run_image: image
 	@if [[ "`docker ps | grep clustermanager`" != "" ]]; then docker stop clustermanager; fi;
 	@if [[ "`docker ps -a | grep clustermanager`" != "" ]]; then docker rm clustermanager; fi;
-	@docker run --name clustermanager -d ${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:`cat VERSION`-${BRANCH} > /dev/null 2>1
+	@docker run --name clustermanager -d ${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:`cat VERSION`-${BRANCH} > /dev/null
 
 publish: image
 	@docker push ${REGISTRY_USERNAME}/${REGISTRY_IMAGE_NAME}:`cat VERSION`-${BRANCH}
