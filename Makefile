@@ -2,11 +2,11 @@ SHELL:=/bin/bash
 
 define USAGE
 Commands:
-	make tests			- Runs tests
-	make server			- Starts the server
+	make tests	- Runs tests
+	make server	- Starts the server
 	make query_aws	- Only starts the polling script
 	make run_image	- Builds and runs the application in a container
-	make publish 		- Pushes the image to DockerHub
+	make publish	- Pushes the image to DockerHub
 endef
 
 export USAGE
